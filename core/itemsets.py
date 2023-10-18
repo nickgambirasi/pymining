@@ -72,13 +72,3 @@ class ItemSet():
 
         self._get_item2idx(transaction_set)
         self._get_idx2item(transaction_set)
-
-    
-                    
-                
-
-
-
-
-
-
