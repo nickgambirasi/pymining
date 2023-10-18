@@ -4,18 +4,33 @@ class TransactionSet():
     """
     Universal representation of a transaction set
     """
-    def __init__(self, **kwargs):
+    def __init__(self, get_transactions_on_init: bool=False, **kwargs):
 
         """
         Creates the itemset based on a provided source and
-        input arguments
+        input arguments. If the `get_transactions_on_init`
+        argument is passed, we initialize the argument and
+        call the `get_transactions(...)` method to load the
+        transaction set based on the keyword arguments pro-
+        vided
         """
         self.transactions = []
 
-        source = kwargs.get("source")
-        assert(
-            source is not None
-        ), "transaction set source cannot be None"
+        # if the transactions are available for import when
+        # the TransactionSet is initialized, this flag must
+        # be passed and the required arguments, including
+        # the transaction data
+        if get_transactions_on_init:
+
+            transactions_source = kwargs.pop("source", None)
+            
+            # check that transactions source is collected,
+            # otherwise error
+            assert(
+                transactions_source
+            ), "`get_transactions_on_init` was set to true, but 'source' was not provided"
+
+            self.get_transactions(source=transactions_source, kwargs=kwargs)
 
 
     def _from_txt(self, filepath, sep):
