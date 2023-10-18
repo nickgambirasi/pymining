@@ -36,6 +36,36 @@ class AprioriMiner():
                 absolute_support > 0 and absolute_support <= len(transactions)
             ), "`absolute_support` must be greater than zero and cannot exceed the number of transactions"
 
-        if not transactions:
-            print("Parameter `transactions` was not set during initialization of miner")
-            print("In order to mine patterns, you will need to set the `AprioriMiner.transactions` variable by calling the `set_transactions` function")
+            self.transactions = transactions
+            self.absolute_support = absolute_support
+            self.relative_support = self.absolute_support / len(self.transactions)
+
+        if relative_support:
+
+            # 3) if relative support is provided, its value must be greater than zero and <= 1
+            assert(
+                relative_support > 0 and relative_support <= 1
+            ), "`relative_support` must be greater than zero and cannot exceed 1"
+
+            self.relative_support = relative_support
+
+            # if a relative support is provided, then the set of transactions doesn't need to
+            # be set immediately. it does, however, need to be set before any mining processes
+            # can occur
+            if not transactions:
+                
+                print("Parameter `transactions` was not set during initialization of miner")
+                print("In order to mine patterns, you will need to set the `AprioriMiner.transactions` variable by calling the `set_transactions` function")
+                self.transactions = None
+                self.absolute_support = None
+
+        self.frequent_patterns = {}
+
+    def set_transactions(self, transactions: TransactionSet):
+        """
+        Method to set a given TransactionSet `transactions` to
+        the AprioriMiner object
+        """
+        self.transactions = transactions
+
+    
