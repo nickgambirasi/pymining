@@ -157,3 +157,11 @@ class TransactionSet():
             case _:
 
                 raise AssertionError("`source` must be one of ['dataframe', 'txt', 'csv', 'tsv']")
+    
+    def __len__(self):
+
+        return len(self.transactions)
+
+    def __str__(self):
+
+        return f"Transaction set\nNum Transactions: {len(self)}\n"
