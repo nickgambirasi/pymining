@@ -2,7 +2,7 @@ import pandas as pd
 
 class TransactionSet():
     """
-    Universal representation of a transaction set
+    Representation of a set of transactions from multiple sources
     """
     def __init__(self, get_transactions_on_init: bool=False, **kwargs):
 
@@ -28,7 +28,7 @@ class TransactionSet():
             # otherwise error
             assert(
                 transactions_source
-            ), "`get_transactions_on_init` was set to true, but 'source' was not provided"
+            ), "`get_transactions_on_init` was set to True, but 'source' was not provided"
 
             self.get_transactions(source=transactions_source, kwargs=kwargs)
 
