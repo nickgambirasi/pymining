@@ -2,7 +2,8 @@ from typing import List
 from itertools import combinations
 import math
 
-from data.transactions import TransactionSet
+from core.transactions import TransactionSet
+from core.itemsets import ItemSet
 
 class AprioriMiner():
     """
