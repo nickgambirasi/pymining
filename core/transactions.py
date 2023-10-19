@@ -1,10 +1,11 @@
 import pandas as pd
+import os
 
 class TransactionSet():
     """
     Representation of a set of transactions from multiple sources
     """
-    def __init__(self, get_transactions_on_init: bool=False, **kwargs):
+    def __init__(self, set_name: str | None = None, get_transactions_on_init: bool=False, **kwargs):
 
         """
         Creates the itemset based on a provided source and
@@ -14,6 +15,11 @@ class TransactionSet():
         transaction set based on the keyword arguments pro-
         vided
         """
+        assert(
+            set_name
+        ), "name for the transaction set must be provided"
+
+        self.set_name = set_name
         self.transactions = []
 
         # if the transactions are available for import when
@@ -98,6 +104,48 @@ class TransactionSet():
         (implements `TransactionSet.from_txt`)
         """
         self._from_txt(filepath=filepath, sep="\t")
+
+    def _save_transaction_set(self, location: str, format: str):
+        """
+        Saves the transaction set in the specified format
+        """
+        # create the directory specified by the user if it
+        # doesn't already exist
+        if not os.path.exists(location):
+            os.mkdir(location)
+    
+        assert(
+            format in {"txt", "csv", "tsv"}
+        ), "supported formats are `txt`, `csv`, and `tsv`"
+
+        match format:
+
+            case "txt":
+                sep = " "
+
+            case "csv":
+                sep = ", "
+
+            case "tsv":
+                sep = "\t"
+
+            case _:
+                raise AssertionError("Invalid format specified")
+
+        # write the transaction set with the specified format type
+        with open(os.path.join(location, f"{self.name}_transactions.{format}"), 'w') as f:
+            # iterate through each item in the transactions and append them to a file
+            for transaction in self.transactions:
+                for item in transaction:
+                    f.write(f"{item}{sep}")
+                f.write("\n")
+
+    def save(self, location: str, format: str="csv"):
+        """
+        Accessible method to save the transaction dataset at 
+        the specified `location`, with the specified `format`
+        """
+        self._save_transaction_set(location, format)
 
     def get_transactions(self, source, **kwargs):
         """
