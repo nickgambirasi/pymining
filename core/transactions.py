@@ -5,6 +5,9 @@ class TransactionSet():
     """
     Representation of a set of transactions from multiple sources
     """
+    #####################################
+    #       INTIALIZATION METHOD        #
+    #####################################
     def __init__(self, set_name: str | None = None, get_transactions_on_init: bool=False, **kwargs):
 
         """
@@ -37,8 +40,93 @@ class TransactionSet():
             ), "`get_transactions_on_init` was set to True, but 'source' was not provided"
 
             self.get_transactions(source=transactions_source, kwargs=kwargs)
+    #####################################
+    #          PUBLIC METHODS           #
+    #####################################
+    def save(self, location: str, format: str="csv"):
+        """
+        Accessible method to save the transaction dataset at 
+        the specified `location`, with the specified `format`
+        """
+        self._save_transaction_set(location, format)
 
+    def get_transactions(self, source, **kwargs):
+        """
+        Method to collect the transactions from the data
+        sources
+        """
+        match source:
 
+            case "dataframe":
+
+                # get the dataframe argument
+                frame = kwargs.get("frame", None)
+                assert (
+                    frame
+                ), "`frame` argument cannot be None if trying to build TransactionSet from dataframe"
+
+                # get the cell argument, defaulting to the "item" method
+                cell = kwargs.get("cell", "item")
+
+                # collect the transactions and return them to the TransactionSet item
+                self._from_pandas(frame=frame, cell=cell)
+
+            case "txt":
+
+                # get the file_path argument
+                file_path = kwargs.get("file_path", None)
+
+                assert(
+                    file_path
+                ), "`file_path` cannot be when trying to read from a .txt file"
+
+                assert(
+                    file_path.endswith(".txt")
+                ), "`file_path` must end in .txt when trying to build a TransactionSet from .txt file"
+
+                # get the separator argument, defaulting to a space between items
+                # in the file
+                sep = kwargs.get("sep", " ")
+
+                self._from_txt(file_path, sep)
+
+            case "csv":
+
+                # get the filename argument
+                file_path = kwargs.get("file_path", None)
+
+                assert(
+                    file_path
+                ), "`file_path` cannot be None when trying to build a TransactionSet from a .csv file"
+
+                assert(
+                    file_path.endswith(".csv")
+                ), "file_path must end with .csv when trying to build a TransactionSet from .csv file"
+
+                self._from_csv(filepath=file_path)
+
+            case "tsv":
+
+                # get the filename argument
+                file_path = kwargs.get("file_path", None)
+
+                assert(
+                    file_path
+                ), "`file_path` cannot be None when trying to build a TransactionSet from a .tsv file"
+
+                assert(
+                    file_path.endswith(".tsv")
+                ), "`file_path` must end with .tsv when trying to build a TransactionSet from a .tsv file"
+
+                self._from_tsv(filepath=file_path)
+
+            case _:
+
+                raise AssertionError("`source` must be one of ['dataframe', 'txt', 'csv', 'tsv']")
+
+    #####################################
+    #         PRIVATE METHODS           #
+    #####################################
     def _from_txt(self, filepath, sep):
         """
         Builds an transaction set from a textfile at location `filepath`
@@ -139,87 +227,6 @@ class TransactionSet():
                 for item in transaction:
                     f.write(f"{item}{sep}")
                 f.write("\n")
-
-    def save(self, location: str, format: str="csv"):
-        """
-        Accessible method to save the transaction dataset at 
-        the specified `location`, with the specified `format`
-        """
-        self._save_transaction_set(location, format)
-
-    def get_transactions(self, source, **kwargs):
-        """
-        Method to collect the transactions from the data
-        sources
-        """
-        match source:
-
-            case "dataframe":
-
-                # get the dataframe argument
-                frame = kwargs.get("frame", None)
-                assert (
-                    frame
-                ), "`frame` argument cannot be None if trying to build TransactionSet from dataframe"
-
-                # get the cell argument, defaulting to the "item" method
-                cell = kwargs.get("cell", "item")
-
-                # collect the transactions and return them to the TransactionSet item
-                self._from_pandas(frame=frame, cell=cell)
-
-            case "txt":
-
-                # get the file_path argument
-                file_path = kwargs.get("file_path", None)
-
-                assert(
-                    file_path
-                ), "`file_path` cannot be when trying to read from a .txt file"
-
-                assert(
-                    file_path.endswith(".txt")
-                ), "`file_path` must end in .txt when trying to build a TransactionSet from .txt file"
-
-                # get the separator argument, defaulting to a space between items
-                # in the file
-                sep = kwargs.get("sep", " ")
-
-                self._from_txt(file_path, sep)
-
-            case "csv":
-
-                # get the filename argument
-                file_path = kwargs.get("file_path", None)
-
-                assert(
-                    file_path
-                ), "`file_path` cannot be None when trying to build a TransactionSet from a .csv file"
-
-                assert(
-                    file_path.endswith(".csv")
-                ), "file_path must end with .csv when trying to build a TransactionSet from .csv file"
-
-                self._from_csv(filepath=file_path)
-
-            case "tsv":
-
-                # get the filename argument
-                file_path = kwargs.get("file_path", None)
-
-                assert(
-                    file_path
-                ), "`file_path` cannot be None when trying to build a TransactionSet from a .tsv file"
-
-                assert(
-                    file_path.endswith(".tsv")
-                ), "`file_path` must end with .tsv when trying to build a TransactionSet from a .tsv file"
-
-                self._from_tsv(filepath=file_path)
-
-            case _:
-
-                raise AssertionError("`source` must be one of ['dataframe', 'txt', 'csv', 'tsv']")
     
     def __len__(self):
 
