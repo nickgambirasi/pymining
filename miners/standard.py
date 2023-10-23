@@ -69,4 +69,26 @@ class AprioriMiner():
         """
         self.transactions = transactions
 
+    def get_transactions(self) -> TransactionSet | None:
+        """
+        Method to get the TransactionSet associated with
+        an AprioriMiner object. Should return either a
+        transaction set 
+        """
+        return self.transactions
+
+    def set_itemset(self, itemset: ItemSet):
+        """
+        Method to set a given ItemSet `itemset` to the AprioriMiner
+        object
+        """
+        self.itemset = itemset
+
+    def get_itemset(self) -> ItemSet | None:
+        """
+        Method to get the itemset associated with the AprioriMiner
+        object
+        """
+        return self.itemset
+
     
